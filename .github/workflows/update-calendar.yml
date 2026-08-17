@@ -1,0 +1,64 @@
+name: Update Calendar
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download iCal
+        run: |
+          curl -L "https://www.e-chalupy.cz/api/calendar/23815/AE523079fdAC6B1/default.ics" -o calendar.ics
+
+      - name: Convert to JSON
+        run: |
+          python3 <<'PY'
+          import json
+          from datetime import datetime, timedelta
+
+          txt=open("calendar.ics").read()
+
+          events=[]
+          for block in txt.split("BEGIN:VEVENT"):
+              if "DTSTART" not in block:
+                  continue
+
+              s=None
+              e=None
+
+              for line in block.splitlines():
+                  if line.startswith("DTSTART"):
+                      s=line.split(":")[1].strip()
+                  if line.startswith("DTEND"):
+                      e=line.split(":")[1].strip()
+
+              if s and e:
+                  start=datetime.strptime(s,"%Y%m%d")
+                  end=datetime.strptime(e,"%Y%m%d")-timedelta(days=1)
+
+                  d=start
+                  while d<=end:
+                      events.append(d.strftime("%Y-%m-%d"))
+                      d+=timedelta(days=1)
+
+          events=sorted(set(events))
+
+          open("availability.json","w").write(json.dumps(events,indent=2))
+          PY
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add availability.json
+          git diff --cached --quiet || git commit -m "Update availability"
+          git push
