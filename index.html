@@ -1,24 +1,28 @@
 <script>
 const monthEl = document.getElementById("month");
 const daysEl = document.getElementById("days");
+const prevBtn = document.getElementById("prev");
+const nextBtn = document.getElementById("next");
 
-let current = new Date();
-
+let current = new Date(2026, 7, 1); // srpen 2026 jako výchozí
 let booked = [];
 let arrival = [];
 let departure = [];
 
-fetch("availability.json")
+// Načti availability.json
+fetch("./availability.json")
   .then(r => r.json())
   .then(data => {
     booked = data.booked || [];
     arrival = data.arrival || [];
     departure = data.departure || [];
     draw();
+  })
+  .catch(err => {
+    console.error("Chyba načtení availability.json:", err);
   });
 
 function draw() {
-
   daysEl.innerHTML = "";
 
   const year = current.getFullYear();
@@ -41,15 +45,16 @@ function draw() {
 
   for (let d = 1; d <= total; d++) {
 
-    const date = `${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const date =
+      `${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
 
     const el = document.createElement("div");
     el.className = "day";
     el.textContent = d;
 
+    const isBooked = booked.includes(date);
     const isArrival = arrival.includes(date);
     const isDeparture = departure.includes(date);
-    const isBooked = booked.includes(date);
 
     if (isArrival && isDeparture) {
       el.classList.add("booked");
@@ -67,12 +72,12 @@ function draw() {
   }
 }
 
-document.getElementById("prev").onclick = () => {
+prevBtn.onclick = () => {
   current.setMonth(current.getMonth() - 1);
   draw();
 };
 
-document.getElementById("next").onclick = () => {
+nextBtn.onclick = () => {
   current.setMonth(current.getMonth() + 1);
   draw();
 };
