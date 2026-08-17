@@ -1,9 +1,9 @@
 name: Update Calendar
 
 on:
-  schedule:
-    - cron: "0 * * * *"
   workflow_dispatch:
+  schedule:
+    - cron: "*/30 * * * *"
 
 permissions:
   contents: write
@@ -23,42 +23,41 @@ jobs:
         run: |
           python3 <<'PY'
           import json
+          import re
           from datetime import datetime, timedelta
 
-          txt=open("calendar.ics").read()
+          text = open("calendar.ics", encoding="utf-8").read()
 
-          events=[]
-          for block in txt.split("BEGIN:VEVENT"):
-              if "DTSTART" not in block:
+          booked = set()
+
+          for event in text.split("BEGIN:VEVENT")[1:]:
+              s = re.search(r"DTSTART[^:]*:(\d{8})T?(\d{6})?", event)
+              e = re.search(r"DTEND[^:]*:(\d{8})T?(\d{6})?", event)
+
+              if not s or not e:
                   continue
 
-              s=None
-              e=None
+              start = datetime.strptime(s.group(1), "%Y%m%d")
+              end = datetime.strptime(e.group(1), "%Y%m%d")
 
-              for line in block.splitlines():
-                  if line.startswith("DTSTART"):
-                      s=line.split(":")[1].strip()
-                  if line.startswith("DTEND"):
-                      e=line.split(":")[1].strip()
+              day = start
+              while day < end:
+                  booked.add(day.strftime("%Y-%m-%d"))
+                  day += timedelta(days=1)
 
-              if s and e:
-                  start=datetime.strptime(s,"%Y%m%d")
-                  end=datetime.strptime(e,"%Y%m%d")-timedelta(days=1)
+          with open("availability.json", "w") as f:
+              json.dump(sorted(booked), f, indent=2)
 
-                  d=start
-                  while d<=end:
-                      events.append(d.strftime("%Y-%m-%d"))
-                      d+=timedelta(days=1)
-
-          events=sorted(set(events))
-
-          open("availability.json","w").write(json.dumps(events,indent=2))
+          print(f"Saved {len(booked)} booked days.")
           PY
 
       - name: Commit changes
         run: |
           git config user.name "github-actions"
-          git config user.email "actions@github.com"
+          git config user.email "github-actions@github.com"
+
           git add availability.json
+
           git diff --cached --quiet || git commit -m "Update availability"
+
           git push
