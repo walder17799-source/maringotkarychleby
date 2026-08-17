@@ -2,212 +2,229 @@
 <html lang="cs">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MIMO – Rezervace</title>
 
-<title>Maringotka MIMO | Rychlebské hory</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
 body{
 font-family:Inter,sans-serif;
-background:#14382E;
-color:#F5E8DA;
-line-height:1.6;
+margin:30px;
+background:#fff;
+color:#111;
 }
 
-.hero{
-max-width:1200px;
+.calendar{
+max-width:720px;
 margin:auto;
-padding:70px 30px;
-display:grid;
-grid-template-columns:1.1fr .9fr;
-gap:50px;
+}
+
+.header{
+display:flex;
+justify-content:space-between;
 align-items:center;
-}
-
-.hero img{
-width:100%;
-border-radius:26px;
-display:block;
-}
-
-.badge{
-font-size:12px;
-letter-spacing:.08em;
-text-transform:uppercase;
-font-weight:700;
-}
-
-.location{
-margin:35px 0 12px;
-font-size:22px;
-font-weight:500;
-}
-
-h1{
-font-size:64px;
-line-height:.95;
 margin-bottom:24px;
 }
 
-.subtitle{
-font-size:20px;
-margin-bottom:35px;
+.header h2{
+font-size:30px;
+margin:0;
 }
 
-.button{
-display:inline-block;
-padding:15px 30px;
+button.nav{
+width:42px;
+height:42px;
 border-radius:999px;
-background:#F5E8DA;
-color:#14382E;
-font-weight:600;
-text-decoration:none;
-}
-
-.features{
-display:flex;
-gap:40px;
-margin-top:40px;
-flex-wrap:wrap;
-font-size:13px;
-font-weight:600;
-text-transform:uppercase;
-}
-
-.section{
-max-width:900px;
-margin:80px auto;
-padding:0 25px;
-}
-
-.section h2{
-font-size:36px;
-margin-bottom:25px;
-}
-
-.calendar-box{
+border:1px solid #ddd;
 background:white;
-border-radius:24px;
-padding:18px;
-overflow:hidden;
-}
-
-iframe{
-width:100%;
-height:420px;
-border:none;
-border-radius:18px;
-background:white;
-}
-
-.form{
-display:grid;
-gap:16px;
-margin-top:30px;
-}
-
-input,textarea{
-width:100%;
-padding:15px;
-border:none;
-border-radius:14px;
-font-size:16px;
-font-family:inherit;
-}
-
-button{
-padding:16px;
-border:none;
-border-radius:999px;
-background:#F5E8DA;
-color:#14382E;
-font-size:16px;
-font-weight:600;
 cursor:pointer;
 }
 
-@media(max-width:900px){
-.hero{
-grid-template-columns:1fr;
-padding:40px 22px;
+.weekdays,.days{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:8px;
 }
-h1{
-font-size:48px;
+
+.weekdays div{
+text-align:center;
+font-size:14px;
+color:#777;
+font-weight:600;
 }
-.location{
-font-size:18px;
+
+.day{
+aspect-ratio:1;
+display:flex;
+align-items:center;
+justify-content:center;
+border:1px solid #ececec;
+border-radius:16px;
 }
+
+.free:hover{
+border-color:#111;
+cursor:pointer;
+}
+
+.booked{
+background:#111;
+color:white;
+border-color:#111;
+}
+
+.empty{
+visibility:hidden;
+}
+
+.selected{
+background:#EADBC8;
+border-color:#EADBC8;
+}
+
+.range{
+background:#F4EFE8;
+}
+
+form{
+max-width:720px;
+margin:50px auto;
+display:grid;
+gap:14px;
+}
+
+input,textarea{
+padding:14px;
+border-radius:14px;
+border:1px solid #ddd;
+font-size:16px;
+}
+
+button.submit{
+padding:16px;
+border:none;
+border-radius:999px;
+background:#14382E;
+color:white;
+font-weight:600;
+cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<section class="hero">
+<div class="calendar">
 
-<div>
-
-<div class="badge">Přijeďte objevit jedno z posledních neturistických míst v Česku</div>
-
-<div class="location">Červený Důl · Rychlebské hory</div>
-
-<h1>Maringotka MIMO</h1>
-
-<p class="subtitle">Útulná maringotka pro dva uprostřed přírody.</p>
-
-<a class="button" href="#rezervace">Požádat o rezervaci</a>
-
-<div class="features">
-<span>2 osoby</span>
-<span>Samota</span>
-<span>Parkování</span>
-<span>Ohniště</span>
+<div class="header">
+<button id="prev" class="nav">‹</button>
+<h2 id="month"></h2>
+<button id="next" class="nav">›</button>
 </div>
+
+<div class="weekdays">
+<div>Po</div><div>Út</div><div>St</div><div>Čt</div><div>Pá</div><div>So</div><div>Ne</div>
+</div>
+
+<div id="days" class="days"></div>
 
 </div>
 
-<div>
+<form action="https://api.web3forms.com/submit" method="POST">
 
-<img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1200" alt="Maringotka">
+<input type="hidden" name="access_key" value="TVŮJ_WEB3FORMS_KLÍČ">
 
-</div>
+<input name="Jméno" placeholder="Jméno" required>
 
-</section>
+<input name="E-mail" type="email" placeholder="E-mail" required>
 
-<section class="section" id="rezervace">
+<input name="Telefon" placeholder="Telefon">
 
-<h2>Dostupnost</h2>
+<input id="arrival" name="Příjezd" placeholder="Příjezd" readonly required>
 
-<div class="calendar-box">
+<input id="departure" name="Odjezd" placeholder="Odjezd" readonly required>
 
-<iframe src="https://obsazenost.e-chalupy.cz/kalendar.php?id=23815&pocetMesicu=1&velikost=6&legenda=ne&naStred=ano&ctvrtleti=ne&stin=ne&jazyk=cz&jednotky=ne&idJednotky=0&vypisJednotky=ne&pozadi=ffffff&kalendarText=111111&kalendarPozadi=ffffff&ramecek=EFEFEF&mesicText=111111&mesicPozadi=ffffff&dnyText=111111&dnyPozadia=ffffff&obsazenoText=ffffff&obsazenoPozadi=111111&volnoText=111111&volnoPozadi=ffffff&castecneText=ffffff&castecnePozadi=666666&neaktivniDnyText=CCCCCC&neaktivniDnyPozadi=ffffff&legendaText=111111&fontFamily=Arial"></iframe>
+<textarea name="Poznámka" placeholder="Poznámka"></textarea>
 
-</div>
-
-<form class="form">
-
-<input placeholder="Jméno">
-
-<input placeholder="E-mail">
-
-<input placeholder="Telefon">
-
-<input placeholder="Příjezd">
-
-<input placeholder="Odjezd">
-
-<textarea rows="4" placeholder="Poznámka (volitelné)"></textarea>
-
-<button type="button">Odeslat žádost o rezervaci</button>
+<button class="submit">Odeslat žádost</button>
 
 </form>
 
-</section>
+<script>
+let booked=[];
+let current=new Date();
+
+const month=document.getElementById("month");
+const days=document.getElementById("days");
+
+let startDate=null;
+let endDate=null;
+
+fetch("availability.json")
+.then(r=>r.json())
+.then(data=>{
+booked=data;
+draw();
+});
+
+function draw(){
+
+days.innerHTML="";
+
+const y=current.getFullYear();
+const m=current.getMonth();
+
+month.textContent=current.toLocaleDateString("cs-CZ",{month:"long",year:"numeric"});
+
+const first=new Date(y,m,1);
+const start=(first.getDay()+6)%7;
+const total=new Date(y,m+1,0).getDate();
+
+for(let i=0;i<start;i++){
+const e=document.createElement("div");
+e.className="day empty";
+days.appendChild(e);
+}
+
+for(let d=1;d<=total;d++){
+
+const el=document.createElement("div");
+
+const date=`${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+
+el.textContent=d;
+
+if(booked.includes(date)){
+el.className="day booked";
+}else{
+el.className="day free";
+el.onclick=()=>select(date);
+}
+
+days.appendChild(el);
+}
+}
+
+function select(date){
+
+if(!startDate||endDate){
+startDate=date;
+endDate=null;
+arrival.value=date;
+departure.value="";
+return;
+}
+
+if(date>startDate){
+endDate=date;
+departure.value=date;
+}
+}
+
+prev.onclick=()=>{current.setMonth(current.getMonth()-1);draw();}
+next.onclick=()=>{current.setMonth(current.getMonth()+1);draw();}
+</script>
 
 </body>
 </html>
