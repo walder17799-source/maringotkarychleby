@@ -9,125 +9,23 @@
 
 <style>
 *{box-sizing:border-box}
-
-body{
-  margin:0;
-  font-family:Inter,sans-serif;
-  background:#0E3A2E;
-  color:#F2E6D5;
-}
-
-.container{
-  max-width:980px;
-  margin:60px auto;
-  padding:0 24px;
-}
-
-h1{
-  font-size:52px;
-  margin:0 0 10px;
-}
-
-h2{
-  font-size:42px;
-  margin:80px 0 25px;
-}
-
-.card{
-  background:white;
-  color:#111;
-  border-radius:28px;
-  padding:35px;
-}
-
-.calendar-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:28px;
-}
-
-.calendar-header h3{
-  margin:0;
-  font-size:32px;
-}
-
-.nav-btn{
-  width:48px;
-  height:48px;
-  border:none;
-  border-radius:50%;
-  background:#111;
-  color:white;
-  font-size:24px;
-  cursor:pointer;
-}
-
-.weekdays,
-.days{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:10px;
-}
-
-.weekdays div{
-  text-align:center;
-  color:#777;
-  font-weight:600;
-}
-
-.day{
-  aspect-ratio:1;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:#F4F4F4;
-  border-radius:16px;
-  font-size:18px;
-  transition:.2s;
-}
-
-.day.booked{
-  background:#111;
-  color:white;
-}
-
-.day.empty{
-  visibility:hidden;
-}
-
-.day.free:hover{
-  background:#EADBC8;
-}
-
-form{
-  display:grid;
-  gap:14px;
-  margin-top:35px;
-}
-
-input,textarea{
-  width:100%;
-  padding:16px;
-  border-radius:14px;
-  border:1px solid #ddd;
-  font-size:16px;
-  font-family:inherit;
-}
-
-textarea{
-  min-height:110px;
-}
-
-.submit{
-  background:#14382E;
-  color:white;
-  border:none;
-  padding:16px;
-  border-radius:999px;
-  font-size:17px;
-  cursor:pointer;
-}
+body{margin:0;font-family:Inter,sans-serif;background:#0E3A2E;color:#F2E6D5}
+.container{max-width:980px;margin:60px auto;padding:0 24px}
+h2{font-size:42px;margin:0 0 30px}
+.card{background:#fff;color:#111;border-radius:28px;padding:35px}
+.calendar-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.calendar-header h3{margin:0;font-size:32px;text-transform:capitalize}
+.nav-btn{width:48px;height:48px;border:none;border-radius:50%;background:#111;color:#fff;font-size:24px;cursor:pointer}
+.weekdays,.days{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
+.weekdays div{text-align:center;font-weight:600;color:#777}
+.day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;background:#F4F4F4;border-radius:16px;font-size:18px}
+.day.booked{background:#111;color:#fff}
+.day.empty{visibility:hidden}
+.day.free:hover{background:#EADBC8}
+form{display:grid;gap:14px;margin-top:30px}
+input,textarea{width:100%;padding:16px;border-radius:14px;border:1px solid #ddd;font-size:16px;font-family:inherit}
+textarea{min-height:110px}
+.submit{background:#14382E;color:#fff;border:none;padding:16px;border-radius:999px;font-size:17px;cursor:pointer}
 </style>
 </head>
 
@@ -146,20 +44,14 @@ textarea{
 </div>
 
 <div class="weekdays">
-<div>Po</div>
-<div>Út</div>
-<div>St</div>
-<div>Čt</div>
-<div>Pá</div>
-<div>So</div>
-<div>Ne</div>
+<div>Po</div><div>Út</div><div>St</div><div>Čt</div><div>Pá</div><div>So</div><div>Ne</div>
 </div>
 
 <div id="days" class="days"></div>
 
 </div>
 
-<div class="card" style="margin-top:30px;">
+<div class="card" style="margin-top:30px">
 
 <h3>Požádat o rezervaci</h3>
 
@@ -170,10 +62,8 @@ textarea{
 <input name="Jméno" placeholder="Jméno" required>
 <input name="E-mail" type="email" placeholder="E-mail" required>
 <input name="Telefon" placeholder="Telefon">
-
 <input name="Příjezd" placeholder="Příjezd">
 <input name="Odjezd" placeholder="Odjezd">
-
 <textarea name="Poznámka" placeholder="Poznámka"></textarea>
 
 <button class="submit">Odeslat žádost</button>
@@ -185,7 +75,6 @@ textarea{
 </div>
 
 <script>
-
 let booked=[];
 let current=new Date();
 
@@ -208,10 +97,7 @@ function draw(){
   const year=current.getFullYear();
   const month=current.getMonth();
 
-  monthEl.textContent=current.toLocaleDateString("cs-CZ",{
-    month:"long",
-    year:"numeric"
-  });
+  monthEl.textContent=current.toLocaleDateString("cs-CZ",{month:"long",year:"numeric"});
 
   const firstDay=new Date(year,month,1);
   const offset=(firstDay.getDay()+6)%7;
@@ -228,7 +114,6 @@ function draw(){
     const date=`${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
 
     const el=document.createElement("div");
-
     el.className="day";
 
     if(booked.includes(date)){
@@ -238,22 +123,19 @@ function draw(){
     }
 
     el.textContent=d;
-
     daysEl.appendChild(el);
   }
-
 }
 
-prevBtn.addEventListener("click",()=>{
+prevBtn.onclick=()=>{
   current.setMonth(current.getMonth()-1);
   draw();
-});
+};
 
-nextBtn.addEventListener("click",()=>{
+nextBtn.onclick=()=>{
   current.setMonth(current.getMonth()+1);
   draw();
-});
-
+};
 </script>
 
 </body>
