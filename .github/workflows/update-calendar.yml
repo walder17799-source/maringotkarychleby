@@ -26,46 +26,47 @@ jobs:
           import re
           from datetime import datetime, timedelta
 
-          text=open("calendar.ics",encoding="utf-8").read()
+          text = open("calendar.ics", encoding="utf-8").read()
 
-          booked=set()
-          arrivals=set()
-          departures=set()
+          booked = set()
+          arrival = set()
+          departure = set()
 
           for ev in text.split("BEGIN:VEVENT")[1:]:
 
-              s=re.search(r"DTSTART[^:]*:(\d{8})",ev)
-              e=re.search(r"DTEND[^:]*:(\d{8})",ev)
+              s = re.search(r"DTSTART[^:]*:(\d{8})", ev)
+              e = re.search(r"DTEND[^:]*:(\d{8})", ev)
 
               if not s or not e:
                   continue
 
-              start=datetime.strptime(s.group(1),"%Y%m%d")
-              end=datetime.strptime(e.group(1),"%Y%m%d")
+              start = datetime.strptime(s.group(1), "%Y%m%d")
+              end = datetime.strptime(e.group(1), "%Y%m%d")
 
-              arrivals.add(start.strftime("%Y-%m-%d"))
-              departures.add((end-timedelta(days=1)).strftime("%Y-%m-%d"))
+              arrival.add(start.strftime("%Y-%m-%d"))
+              departure.add((end - timedelta(days=1)).strftime("%Y-%m-%d"))
 
-              d=start
-              while d<end:
+              d = start
+              while d < end:
                   booked.add(d.strftime("%Y-%m-%d"))
-                  d+=timedelta(days=1)
+                  d += timedelta(days=1)
 
-          with open("availability.json","w") as f:
+          with open("availability.json", "w") as f:
               json.dump({
-                  "booked":sorted(booked),
-                  "arrival":sorted(arrivals),
-                  "departure":sorted(departures)
-              },f,indent=2)
+                  "booked": sorted(booked),
+                  "arrival": sorted(arrival),
+                  "departure": sorted(departure)
+              }, f, indent=2)
           PY
 
-      - name: Commit
+      - name: Commit changes
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
 
           git add availability.json
 
-          git diff --cached --quiet || git commit -m "Update availability"
-
-          git push
+          if ! git diff --cached --quiet; then
+            git commit -m "Update availability"
+            git push
+          fi
