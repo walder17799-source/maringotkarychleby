@@ -2,148 +2,177 @@
 <html lang="cs">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MIMO – Rezervace</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maringotka MIMO – Rezervace</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
+*{box-sizing:border-box}
+
 body{
-font-family:Inter,sans-serif;
-margin:30px;
-background:#fff;
-color:#111;
+  margin:0;
+  font-family:Inter,sans-serif;
+  background:#0E3A2E;
+  color:#F2E6D5;
 }
 
-.calendar{
-max-width:720px;
-margin:auto;
+.container{
+  max-width:980px;
+  margin:60px auto;
+  padding:0 24px;
 }
 
-.header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:24px;
+h1{
+  font-size:52px;
+  margin:0 0 10px;
 }
 
-.header h2{
-font-size:30px;
-margin:0;
+h2{
+  font-size:42px;
+  margin:80px 0 25px;
 }
 
-button.nav{
-width:42px;
-height:42px;
-border-radius:999px;
-border:1px solid #ddd;
-background:white;
-cursor:pointer;
+.card{
+  background:white;
+  color:#111;
+  border-radius:28px;
+  padding:35px;
 }
 
-.weekdays,.days{
-display:grid;
-grid-template-columns:repeat(7,1fr);
-gap:8px;
+.calendar-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:28px;
+}
+
+.calendar-header h3{
+  margin:0;
+  font-size:32px;
+}
+
+.nav-btn{
+  width:48px;
+  height:48px;
+  border:none;
+  border-radius:50%;
+  background:#111;
+  color:white;
+  font-size:24px;
+  cursor:pointer;
+}
+
+.weekdays,
+.days{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:10px;
 }
 
 .weekdays div{
-text-align:center;
-font-size:14px;
-color:#777;
-font-weight:600;
+  text-align:center;
+  color:#777;
+  font-weight:600;
 }
 
 .day{
-aspect-ratio:1;
-display:flex;
-align-items:center;
-justify-content:center;
-border:1px solid #ececec;
-border-radius:16px;
+  aspect-ratio:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#F4F4F4;
+  border-radius:16px;
+  font-size:18px;
+  transition:.2s;
 }
 
-.free:hover{
-border-color:#111;
-cursor:pointer;
+.day.booked{
+  background:#111;
+  color:white;
 }
 
-.booked{
-background:#111;
-color:white;
-border-color:#111;
+.day.empty{
+  visibility:hidden;
 }
 
-.empty{
-visibility:hidden;
-}
-
-.selected{
-background:#EADBC8;
-border-color:#EADBC8;
-}
-
-.range{
-background:#F4EFE8;
+.day.free:hover{
+  background:#EADBC8;
 }
 
 form{
-max-width:720px;
-margin:50px auto;
-display:grid;
-gap:14px;
+  display:grid;
+  gap:14px;
+  margin-top:35px;
 }
 
 input,textarea{
-padding:14px;
-border-radius:14px;
-border:1px solid #ddd;
-font-size:16px;
+  width:100%;
+  padding:16px;
+  border-radius:14px;
+  border:1px solid #ddd;
+  font-size:16px;
+  font-family:inherit;
 }
 
-button.submit{
-padding:16px;
-border:none;
-border-radius:999px;
-background:#14382E;
-color:white;
-font-weight:600;
-cursor:pointer;
+textarea{
+  min-height:110px;
+}
+
+.submit{
+  background:#14382E;
+  color:white;
+  border:none;
+  padding:16px;
+  border-radius:999px;
+  font-size:17px;
+  cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<div class="calendar">
+<div class="container">
 
-<div class="header">
-<button id="prev" class="nav">‹</button>
-<h2 id="month"></h2>
-<button id="next" class="nav">›</button>
+<h2>Dostupnost</h2>
+
+<div class="card">
+
+<div class="calendar-header">
+<button id="prev" class="nav-btn">‹</button>
+<h3 id="month"></h3>
+<button id="next" class="nav-btn">›</button>
 </div>
 
 <div class="weekdays">
-<div>Po</div><div>Út</div><div>St</div><div>Čt</div><div>Pá</div><div>So</div><div>Ne</div>
+<div>Po</div>
+<div>Út</div>
+<div>St</div>
+<div>Čt</div>
+<div>Pá</div>
+<div>So</div>
+<div>Ne</div>
 </div>
 
 <div id="days" class="days"></div>
 
 </div>
 
+<div class="card" style="margin-top:30px;">
+
+<h3>Požádat o rezervaci</h3>
+
 <form action="https://api.web3forms.com/submit" method="POST">
 
 <input type="hidden" name="access_key" value="4019eb80-3ffe-4332-b855-66a60eb5fb1f">
 
 <input name="Jméno" placeholder="Jméno" required>
-
 <input name="E-mail" type="email" placeholder="E-mail" required>
-
 <input name="Telefon" placeholder="Telefon">
 
-<input id="arrival" name="Příjezd" placeholder="Příjezd" readonly required>
-
-<input id="departure" name="Odjezd" placeholder="Odjezd" readonly required>
+<input name="Příjezd" placeholder="Příjezd">
+<input name="Odjezd" placeholder="Odjezd">
 
 <textarea name="Poznámka" placeholder="Poznámka"></textarea>
 
@@ -151,79 +180,80 @@ cursor:pointer;
 
 </form>
 
+</div>
+
+</div>
+
 <script>
+
 let booked=[];
 let current=new Date();
 
-const month=document.getElementById("month");
-const days=document.getElementById("days");
-
-let startDate=null;
-let endDate=null;
+const monthEl=document.getElementById("month");
+const daysEl=document.getElementById("days");
+const prevBtn=document.getElementById("prev");
+const nextBtn=document.getElementById("next");
 
 fetch("availability.json")
 .then(r=>r.json())
 .then(data=>{
-booked=data;
-draw();
+  booked=data;
+  draw();
 });
 
 function draw(){
 
-days.innerHTML="";
+  daysEl.innerHTML="";
 
-const y=current.getFullYear();
-const m=current.getMonth();
+  const year=current.getFullYear();
+  const month=current.getMonth();
 
-month.textContent=current.toLocaleDateString("cs-CZ",{month:"long",year:"numeric"});
+  monthEl.textContent=current.toLocaleDateString("cs-CZ",{
+    month:"long",
+    year:"numeric"
+  });
 
-const first=new Date(y,m,1);
-const start=(first.getDay()+6)%7;
-const total=new Date(y,m+1,0).getDate();
+  const firstDay=new Date(year,month,1);
+  const offset=(firstDay.getDay()+6)%7;
+  const totalDays=new Date(year,month+1,0).getDate();
 
-for(let i=0;i<start;i++){
-const e=document.createElement("div");
-e.className="day empty";
-days.appendChild(e);
+  for(let i=0;i<offset;i++){
+    const e=document.createElement("div");
+    e.className="day empty";
+    daysEl.appendChild(e);
+  }
+
+  for(let d=1;d<=totalDays;d++){
+
+    const date=`${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+
+    const el=document.createElement("div");
+
+    el.className="day";
+
+    if(booked.includes(date)){
+      el.classList.add("booked");
+    }else{
+      el.classList.add("free");
+    }
+
+    el.textContent=d;
+
+    daysEl.appendChild(el);
+  }
+
 }
 
-for(let d=1;d<=total;d++){
+prevBtn.addEventListener("click",()=>{
+  current.setMonth(current.getMonth()-1);
+  draw();
+});
 
-const el=document.createElement("div");
+nextBtn.addEventListener("click",()=>{
+  current.setMonth(current.getMonth()+1);
+  draw();
+});
 
-const date=`${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
-
-el.textContent=d;
-
-if(booked.includes(date)){
-el.className="day booked";
-}else{
-el.className="day free";
-el.onclick=()=>select(date);
-}
-
-days.appendChild(el);
-}
-}
-
-function select(date){
-
-if(!startDate||endDate){
-startDate=date;
-endDate=null;
-arrival.value=date;
-departure.value="";
-return;
-}
-
-if(date>startDate){
-endDate=date;
-departure.value=date;
-}
-}
-
-prev.onclick=()=>{current.setMonth(current.getMonth()-1);draw();}
-next.onclick=()=>{current.setMonth(current.getMonth()+1);draw();}
 </script>
 
 </body>
