@@ -3,29 +3,164 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Maringotka MIMO – Rezervace</title>
+<title>Maringotka MIMO</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Inter,sans-serif;background:#0E3A2E;color:#F2E6D5}
-.container{max-width:980px;margin:60px auto;padding:0 24px}
-h2{font-size:42px;margin:0 0 30px}
-.card{background:#fff;color:#111;border-radius:28px;padding:35px}
-.calendar-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
-.calendar-header h3{margin:0;font-size:32px;text-transform:capitalize}
-.nav-btn{width:48px;height:48px;border:none;border-radius:50%;background:#111;color:#fff;font-size:24px;cursor:pointer}
-.weekdays,.days{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
-.weekdays div{text-align:center;font-weight:600;color:#777}
-.day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;background:#F4F4F4;border-radius:16px;font-size:18px}
-.day.booked{background:#111;color:#fff}
-.day.empty{visibility:hidden}
-.day.free:hover{background:#EADBC8}
-form{display:grid;gap:14px;margin-top:30px}
-input,textarea{width:100%;padding:16px;border-radius:14px;border:1px solid #ddd;font-size:16px;font-family:inherit}
-textarea{min-height:110px}
-.submit{background:#14382E;color:#fff;border:none;padding:16px;border-radius:999px;font-size:17px;cursor:pointer}
+
+body{
+  margin:0;
+  font-family:Inter,sans-serif;
+  background:#0E3A2E;
+  color:#F2E6D5;
+}
+
+.container{
+  max-width:980px;
+  margin:60px auto;
+  padding:0 24px;
+}
+
+h2{
+  font-size:42px;
+  margin-bottom:25px;
+}
+
+.card{
+  background:white;
+  color:#111;
+  border-radius:28px;
+  padding:35px;
+}
+
+.calendar-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:28px;
+}
+
+.calendar-header h3{
+  margin:0;
+  font-size:34px;
+}
+
+.nav-btn{
+  width:48px;
+  height:48px;
+  border:none;
+  border-radius:50%;
+  background:#111;
+  color:white;
+  font-size:24px;
+  cursor:pointer;
+}
+
+.weekdays,
+.days{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:10px;
+}
+
+.weekdays div{
+  text-align:center;
+  color:#777;
+  font-weight:600;
+}
+
+.day{
+  aspect-ratio:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#F4F4F4;
+  border-radius:16px;
+  font-size:18px;
+  transition:.2s;
+}
+
+.day.booked{
+  background:#111;
+  color:white;
+}
+
+/* PŘÍJEZD – pravá půlka černá */
+.day.arrival{
+  background:linear-gradient(to right,#F4F4F4 50%,#111 50%);
+  color:#111;
+}
+
+/* ODJEZD – levá půlka černá */
+.day.departure{
+  background:linear-gradient(to right,#111 50%,#F4F4F4 50%);
+  color:white;
+}
+
+.day.free:hover{
+  background:#EADBC8;
+  cursor:pointer;
+}
+
+.day.empty{
+  visibility:hidden;
+}
+
+form{
+  display:grid;
+  gap:14px;
+  margin-top:35px;
+}
+
+input,textarea{
+  width:100%;
+  padding:16px;
+  border-radius:14px;
+  border:1px solid #ddd;
+  font-size:16px;
+  font-family:inherit;
+}
+
+textarea{
+  min-height:110px;
+}
+
+.submit{
+  background:#14382E;
+  color:white;
+  border:none;
+  padding:16px;
+  border-radius:999px;
+  font-size:17px;
+  cursor:pointer;
+}
+
+.legend{
+  display:flex;
+  gap:18px;
+  flex-wrap:wrap;
+  margin-top:22px;
+}
+
+.legend-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:14px;
+}
+
+.legend-box{
+  width:18px;
+  height:18px;
+  border-radius:5px;
+  background:#F4F4F4;
+}
+
+.legend-box.booked{background:#111;}
+.legend-box.arrival{background:linear-gradient(to right,#F4F4F4 50%,#111 50%);}
+.legend-box.departure{background:linear-gradient(to right,#111 50%,#F4F4F4 50%);}
 </style>
 </head>
 
@@ -44,14 +179,27 @@ textarea{min-height:110px}
 </div>
 
 <div class="weekdays">
-<div>Po</div><div>Út</div><div>St</div><div>Čt</div><div>Pá</div><div>So</div><div>Ne</div>
+<div>Po</div>
+<div>Út</div>
+<div>St</div>
+<div>Čt</div>
+<div>Pá</div>
+<div>So</div>
+<div>Ne</div>
 </div>
 
 <div id="days" class="days"></div>
 
+<div class="legend">
+  <div class="legend-item"><span class="legend-box"></span>Volno</div>
+  <div class="legend-item"><span class="legend-box arrival"></span>Příjezd</div>
+  <div class="legend-item"><span class="legend-box departure"></span>Odjezd</div>
+  <div class="legend-item"><span class="legend-box booked"></span>Obsazeno</div>
 </div>
 
-<div class="card" style="margin-top:30px">
+</div>
+
+<div class="card" style="margin-top:30px;">
 
 <h3>Požádat o rezervaci</h3>
 
@@ -60,10 +208,15 @@ textarea{min-height:110px}
 <input type="hidden" name="access_key" value="4019eb80-3ffe-4332-b855-66a60eb5fb1f">
 
 <input name="Jméno" placeholder="Jméno" required>
+
 <input name="E-mail" type="email" placeholder="E-mail" required>
+
 <input name="Telefon" placeholder="Telefon">
-<input name="Příjezd" placeholder="Příjezd">
-<input name="Odjezd" placeholder="Odjezd">
+
+<input name="Příjezd" type="date" required>
+
+<input name="Odjezd" type="date" required>
+
 <textarea name="Poznámka" placeholder="Poznámka"></textarea>
 
 <button class="submit">Odeslat žádost</button>
@@ -75,18 +228,22 @@ textarea{min-height:110px}
 </div>
 
 <script>
-let booked=[];
-let current=new Date();
 
 const monthEl=document.getElementById("month");
 const daysEl=document.getElementById("days");
-const prevBtn=document.getElementById("prev");
-const nextBtn=document.getElementById("next");
+
+let current=new Date();
+
+let booked=[];
+let arrival=[];
+let departure=[];
 
 fetch("availability.json")
 .then(r=>r.json())
 .then(data=>{
-  booked=data;
+  booked=data.booked||[];
+  arrival=data.arrival||[];
+  departure=data.departure||[];
   draw();
 });
 
@@ -97,11 +254,14 @@ function draw(){
   const year=current.getFullYear();
   const month=current.getMonth();
 
-  monthEl.textContent=current.toLocaleDateString("cs-CZ",{month:"long",year:"numeric"});
+  monthEl.textContent=current.toLocaleDateString("cs-CZ",{
+    month:"long",
+    year:"numeric"
+  });
 
-  const firstDay=new Date(year,month,1);
-  const offset=(firstDay.getDay()+6)%7;
-  const totalDays=new Date(year,month+1,0).getDate();
+  const first=new Date(year,month,1);
+  const offset=(first.getDay()+6)%7;
+  const total=new Date(year,month+1,0).getDate();
 
   for(let i=0;i<offset;i++){
     const e=document.createElement("div");
@@ -109,33 +269,47 @@ function draw(){
     daysEl.appendChild(e);
   }
 
-  for(let d=1;d<=totalDays;d++){
+  for(let d=1;d<=total;d++){
 
     const date=`${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
 
     const el=document.createElement("div");
     el.className="day";
+    el.textContent=d;
 
     if(booked.includes(date)){
-      el.classList.add("booked");
+
+      if(arrival.includes(date)){
+        el.classList.add("arrival");
+      }
+
+      else if(departure.includes(date)){
+        el.classList.add("departure");
+      }
+
+      else{
+        el.classList.add("booked");
+      }
+
     }else{
       el.classList.add("free");
     }
 
-    el.textContent=d;
     daysEl.appendChild(el);
   }
+
 }
 
-prevBtn.onclick=()=>{
+document.getElementById("prev").onclick=()=>{
   current.setMonth(current.getMonth()-1);
   draw();
-};
+}
 
-nextBtn.onclick=()=>{
+document.getElementById("next").onclick=()=>{
   current.setMonth(current.getMonth()+1);
   draw();
-};
+}
+
 </script>
 
 </body>
