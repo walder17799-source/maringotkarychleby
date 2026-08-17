@@ -1,84 +1,280 @@
-<script>
-const monthEl = document.getElementById("month");
-const daysEl = document.getElementById("days");
-const prevBtn = document.getElementById("prev");
-const nextBtn = document.getElementById("next");
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maringotka MIMO – Rezervace</title>
 
-let current = new Date(2026, 7, 1); // srpen 2026 jako výchozí
-let booked = [];
-let arrival = [];
-let departure = [];
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-// Načti availability.json
-fetch("./availability.json")
-  .then(r => r.json())
-  .then(data => {
-    booked = data.booked || [];
-    arrival = data.arrival || [];
-    departure = data.departure || [];
-    draw();
-  })
-  .catch(err => {
-    console.error("Chyba načtení availability.json:", err);
-  });
+<style>
 
-function draw() {
-  daysEl.innerHTML = "";
-
-  const year = current.getFullYear();
-  const month = current.getMonth();
-
-  monthEl.textContent = current.toLocaleDateString("cs-CZ", {
-    month: "long",
-    year: "numeric"
-  });
-
-  const first = new Date(year, month, 1);
-  const offset = (first.getDay() + 6) % 7;
-  const total = new Date(year, month + 1, 0).getDate();
-
-  for (let i = 0; i < offset; i++) {
-    const e = document.createElement("div");
-    e.className = "day empty";
-    daysEl.appendChild(e);
-  }
-
-  for (let d = 1; d <= total; d++) {
-
-    const date =
-      `${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
-
-    const el = document.createElement("div");
-    el.className = "day";
-    el.textContent = d;
-
-    const isBooked = booked.includes(date);
-    const isArrival = arrival.includes(date);
-    const isDeparture = departure.includes(date);
-
-    if (isArrival && isDeparture) {
-      el.classList.add("booked");
-    } else if (isArrival) {
-      el.classList.add("arrival");
-    } else if (isDeparture) {
-      el.classList.add("departure");
-    } else if (isBooked) {
-      el.classList.add("booked");
-    } else {
-      el.classList.add("free");
-    }
-
-    daysEl.appendChild(el);
-  }
+*{
+  box-sizing:border-box;
 }
 
-prevBtn.onclick = () => {
-  current.setMonth(current.getMonth() - 1);
-  draw();
+body{
+  margin:0;
+  background:#0E3A2E;
+  font-family:Inter,sans-serif;
+  color:#F2E6D5;
+}
+
+.container{
+  max-width:980px;
+  margin:30px auto;
+  padding:0 24px;
+}
+
+h2{
+  font-size:58px;
+  margin-bottom:28px;
+}
+
+.card{
+  background:white;
+  color:#111;
+  border-radius:30px;
+  padding:34px;
+}
+
+.calendar-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:28px;
+}
+
+.calendar-header h3{
+  margin:0;
+  font-size:34px;
+  text-transform:capitalize;
+}
+
+.nav-btn{
+  width:52px;
+  height:52px;
+  border:none;
+  border-radius:50%;
+  background:#111;
+  color:white;
+  font-size:26px;
+  cursor:pointer;
+}
+
+.weekdays,
+.days{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:12px;
+}
+
+.weekdays{
+  margin-bottom:12px;
+}
+
+.weekdays div{
+  text-align:center;
+  font-weight:600;
+  color:#777;
+}
+
+.day{
+  aspect-ratio:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#F3F3F3;
+  border-radius:18px;
+  font-size:28px;
+  transition:.2s;
+}
+
+.day.empty{
+  visibility:hidden;
+}
+
+.day.free:hover{
+  background:#EADBC8;
+}
+
+.day.booked{
+  background:#111;
+  color:white;
+}
+
+/* Příjezd */
+
+.day.arrival{
+  background:linear-gradient(135deg,#F3F3F3 0 50%,#111 50% 100%);
+  color:white;
+}
+
+/* Odjezd */
+
+.day.departure{
+  background:linear-gradient(135deg,#111 0 50%,#F3F3F3 50% 100%);
+  color:white;
+}
+
+@media(max-width:700px){
+
+.container{
+  padding:0 14px;
+}
+
+.card{
+  padding:20px;
+}
+
+.calendar-header h3{
+  font-size:26px;
+}
+
+.day{
+  font-size:20px;
+  border-radius:14px;
+}
+
+.weekdays,
+.days{
+  gap:8px;
+}
+
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h2>Dostupnost</h2>
+
+<div class="card">
+
+<div class="calendar-header">
+
+<button id="prev" class="nav-btn">‹</button>
+
+<h3 id="month"></h3>
+
+<button id="next" class="nav-btn">›</button>
+
+</div>
+
+<div class="weekdays">
+
+<div>Po</div>
+<div>Út</div>
+<div>St</div>
+<div>Čt</div>
+<div>Pá</div>
+<div>So</div>
+<div>Ne</div>
+
+</div>
+
+<div id="days" class="days"></div>
+
+</div>
+
+</div>
+
+<script>
+
+let booked=[];
+let arrival=[];
+let departure=[];
+let current=new Date();
+
+const monthEl=document.getElementById("month");
+const daysEl=document.getElementById("days");
+const prevBtn=document.getElementById("prev");
+const nextBtn=document.getElementById("next");
+
+fetch("availability.json")
+.then(r=>r.json())
+.then(data=>{
+
+booked=data.booked||[];
+arrival=data.arrival||[];
+departure=data.departure||[];
+
+draw();
+
+})
+.catch(()=>draw());
+
+function draw(){
+
+daysEl.innerHTML="";
+
+const year=current.getFullYear();
+const month=current.getMonth();
+
+monthEl.textContent=current.toLocaleDateString("cs-CZ",{
+month:"long",
+year:"numeric"
+});
+
+const first=new Date(year,month,1);
+const offset=(first.getDay()+6)%7;
+const total=new Date(year,month+1,0).getDate();
+
+for(let i=0;i<offset;i++){
+
+const e=document.createElement("div");
+e.className="day empty";
+daysEl.appendChild(e);
+
+}
+
+for(let d=1;d<=total;d++){
+
+const date=`${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+
+const el=document.createElement("div");
+el.className="day";
+el.textContent=d;
+
+if(booked.includes(date)){
+
+el.classList.add("booked");
+
+if(arrival.includes(date))
+el.classList.add("arrival");
+
+if(departure.includes(date))
+el.classList.add("departure");
+
+}else{
+
+el.classList.add("free");
+
+}
+
+daysEl.appendChild(el);
+
+}
+
+}
+
+prevBtn.onclick=()=>{
+
+current.setMonth(current.getMonth()-1);
+draw();
+
 };
 
-nextBtn.onclick = () => {
-  current.setMonth(current.getMonth() + 1);
-  draw();
+nextBtn.onclick=()=>{
+
+current.setMonth(current.getMonth()+1);
+draw();
+
 };
+
 </script>
+
+</body>
+</html>
