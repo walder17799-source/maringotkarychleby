@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Maringotka MIMO | Rychlebské hory</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+font-family:Inter,sans-serif;
+background:#14382E;
+color:#F5E8DA;
+line-height:1.6;
+}
+
+.hero{
+max-width:1200px;
+margin:auto;
+padding:70px 30px;
+display:grid;
+grid-template-columns:1.1fr .9fr;
+gap:50px;
+align-items:center;
+}
+
+.hero img{
+width:100%;
+border-radius:26px;
+display:block;
+}
+
+.badge{
+font-size:12px;
+letter-spacing:.08em;
+text-transform:uppercase;
+font-weight:700;
+}
+
+.location{
+margin:35px 0 12px;
+font-size:22px;
+font-weight:500;
+}
+
+h1{
+font-size:64px;
+line-height:.95;
+margin-bottom:24px;
+}
+
+.subtitle{
+font-size:20px;
+margin-bottom:35px;
+}
+
+.button{
+display:inline-block;
+padding:15px 30px;
+border-radius:999px;
+background:#F5E8DA;
+color:#14382E;
+font-weight:600;
+text-decoration:none;
+}
+
+.features{
+display:flex;
+gap:40px;
+margin-top:40px;
+flex-wrap:wrap;
+font-size:13px;
+font-weight:600;
+text-transform:uppercase;
+}
+
+.section{
+max-width:900px;
+margin:80px auto;
+padding:0 25px;
+}
+
+.section h2{
+font-size:36px;
+margin-bottom:25px;
+}
+
+.calendar-box{
+background:white;
+border-radius:24px;
+padding:18px;
+overflow:hidden;
+}
+
+iframe{
+width:100%;
+height:420px;
+border:none;
+border-radius:18px;
+background:white;
+}
+
+.form{
+display:grid;
+gap:16px;
+margin-top:30px;
+}
+
+input,textarea{
+width:100%;
+padding:15px;
+border:none;
+border-radius:14px;
+font-size:16px;
+font-family:inherit;
+}
+
+button{
+padding:16px;
+border:none;
+border-radius:999px;
+background:#F5E8DA;
+color:#14382E;
+font-size:16px;
+font-weight:600;
+cursor:pointer;
+}
+
+@media(max-width:900px){
+.hero{
+grid-template-columns:1fr;
+padding:40px 22px;
+}
+h1{
+font-size:48px;
+}
+.location{
+font-size:18px;
+}
+}
+</style>
+</head>
+
+<body>
+
+<section class="hero">
+
+<div>
+
+<div class="badge">Přijeďte objevit jedno z posledních neturistických míst v Česku</div>
+
+<div class="location">Červený Důl · Rychlebské hory</div>
+
+<h1>Maringotka MIMO</h1>
+
+<p class="subtitle">Útulná maringotka pro dva uprostřed přírody.</p>
+
+<a class="button" href="#rezervace">Požádat o rezervaci</a>
+
+<div class="features">
+<span>2 osoby</span>
+<span>Samota</span>
+<span>Parkování</span>
+<span>Ohniště</span>
+</div>
+
+</div>
+
+<div>
+
+<img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1200" alt="Maringotka">
+
+</div>
+
+</section>
+
+<section class="section" id="rezervace">
+
+<h2>Dostupnost</h2>
+
+<div class="calendar-box">
+
+<iframe src="https://obsazenost.e-chalupy.cz/kalendar.php?id=23815&pocetMesicu=1&velikost=6&legenda=ne&naStred=ano&ctvrtleti=ne&stin=ne&jazyk=cz&jednotky=ne&idJednotky=0&vypisJednotky=ne&pozadi=ffffff&kalendarText=111111&kalendarPozadi=ffffff&ramecek=EFEFEF&mesicText=111111&mesicPozadi=ffffff&dnyText=111111&dnyPozadia=ffffff&obsazenoText=ffffff&obsazenoPozadi=111111&volnoText=111111&volnoPozadi=ffffff&castecneText=ffffff&castecnePozadi=666666&neaktivniDnyText=CCCCCC&neaktivniDnyPozadi=ffffff&legendaText=111111&fontFamily=Arial"></iframe>
+
+</div>
+
+<form class="form">
+
+<input placeholder="Jméno">
+
+<input placeholder="E-mail">
+
+<input placeholder="Telefon">
+
+<input placeholder="Příjezd">
+
+<input placeholder="Odjezd">
+
+<textarea rows="4" placeholder="Poznámka (volitelné)"></textarea>
+
+<button type="button">Odeslat žádost o rezervaci</button>
+
+</form>
+
+</section>
+
+</body>
+</html>
