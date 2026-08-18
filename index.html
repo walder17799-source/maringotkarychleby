@@ -9,9 +9,7 @@
 
 <style>
 
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 body{
   margin:0;
@@ -88,10 +86,16 @@ h2{
   border-radius:18px;
   font-size:28px;
   transition:.2s;
+  position:relative;
+  overflow:hidden;
 }
 
 .day.empty{
   visibility:hidden;
+}
+
+.day.free{
+  cursor:pointer;
 }
 
 .day.free:hover{
@@ -103,18 +107,86 @@ h2{
   color:white;
 }
 
-/* Příjezd */
-
 .day.arrival{
   background:linear-gradient(135deg,#F3F3F3 0 50%,#111 50% 100%);
   color:white;
 }
 
-/* Odjezd */
-
 .day.departure{
   background:linear-gradient(135deg,#111 0 50%,#F3F3F3 50% 100%);
   color:white;
+}
+
+.day.selected{
+  outline:3px solid #D9C8B0;
+}
+
+.legend{
+  display:flex;
+  gap:22px;
+  margin-top:22px;
+  flex-wrap:wrap;
+  font-size:15px;
+}
+
+.legend-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.legend-box{
+  width:18px;
+  height:18px;
+  border-radius:5px;
+}
+
+.legend-booked{
+  background:#111;
+}
+
+.legend-arrival{
+  background:linear-gradient(135deg,#F3F3F3 0 50%,#111 50% 100%);
+}
+
+.legend-departure{
+  background:linear-gradient(135deg,#111 0 50%,#F3F3F3 50% 100%);
+}
+
+form{
+  display:grid;
+  gap:14px;
+  margin-top:22px;
+}
+
+input,
+select,
+textarea{
+  width:100%;
+  padding:16px;
+  border-radius:14px;
+  border:1px solid #ddd;
+  font-size:16px;
+  font-family:inherit;
+}
+
+textarea{
+  min-height:120px;
+  resize:vertical;
+}
+
+.submit{
+  background:#14382E;
+  color:white;
+  border:none;
+  padding:16px;
+  border-radius:999px;
+  font-size:17px;
+  cursor:pointer;
+}
+
+.submit:hover{
+  opacity:.92;
 }
 
 @media(max-width:700px){
@@ -125,6 +197,10 @@ h2{
 
 .card{
   padding:20px;
+}
+
+h2{
+  font-size:42px;
 }
 
 .calendar-header h3{
@@ -141,6 +217,11 @@ h2{
   gap:8px;
 }
 
+.nav-btn{
+  width:44px;
+  height:44px;
+}
+
 }
 
 </style>
@@ -154,17 +235,12 @@ h2{
 <div class="card">
 
 <div class="calendar-header">
-
 <button id="prev" class="nav-btn">‹</button>
-
 <h3 id="month"></h3>
-
 <button id="next" class="nav-btn">›</button>
-
 </div>
 
 <div class="weekdays">
-
 <div>Po</div>
 <div>Út</div>
 <div>St</div>
@@ -172,10 +248,61 @@ h2{
 <div>Pá</div>
 <div>So</div>
 <div>Ne</div>
-
 </div>
 
 <div id="days" class="days"></div>
+
+<div class="legend">
+
+<div class="legend-item">
+<div class="legend-box legend-booked"></div>
+Obsazeno
+</div>
+
+<div class="legend-item">
+<div class="legend-box legend-arrival"></div>
+Příjezd
+</div>
+
+<div class="legend-item">
+<div class="legend-box legend-departure"></div>
+Odjezd
+</div>
+
+</div>
+
+</div>
+
+<div class="card" style="margin-top:30px;">
+
+<h3 style="margin-top:0;font-size:34px;">Požádat o rezervaci</h3>
+
+<form action="https://api.web3forms.com/submit" method="POST">
+
+<input type="hidden" name="access_key" value="4019eb80-3ffe-4332-b855-66a60eb5fb1f">
+
+<input type="hidden" name="subject" value="Nová žádost o rezervaci – Maringotka MIMO">
+
+<input type="text" name="Jméno" placeholder="Jméno a příjmení" required>
+
+<input type="email" name="E-mail" placeholder="E-mail" required>
+
+<input type="tel" name="Telefon" placeholder="Telefon">
+
+<input id="arrivalInput" name="Příjezd" placeholder="Příjezd" required>
+
+<input id="departureInput" name="Odjezd" placeholder="Odjezd" required>
+
+<select name="Počet osob">
+<option value="1">1 osoba</option>
+<option value="2" selected>2 osoby</option>
+</select>
+
+<textarea name="Poznámka" placeholder="Napište nám cokoliv – například přibližný čas příjezdu nebo dotaz."></textarea>
+
+<button class="submit">Odeslat žádost</button>
+
+</form>
 
 </div>
 
@@ -188,21 +315,24 @@ let arrival=[];
 let departure=[];
 let current=new Date();
 
+let selectedArrival=null;
+let selectedDeparture=null;
+
 const monthEl=document.getElementById("month");
 const daysEl=document.getElementById("days");
 const prevBtn=document.getElementById("prev");
 const nextBtn=document.getElementById("next");
 
+const arrivalInput=document.getElementById("arrivalInput");
+const departureInput=document.getElementById("departureInput");
+
 fetch("availability.json")
 .then(r=>r.json())
 .then(data=>{
-
 booked=data.booked||[];
 arrival=data.arrival||[];
 departure=data.departure||[];
-
 draw();
-
 })
 .catch(()=>draw());
 
@@ -213,21 +343,16 @@ daysEl.innerHTML="";
 const year=current.getFullYear();
 const month=current.getMonth();
 
-monthEl.textContent=current.toLocaleDateString("cs-CZ",{
-month:"long",
-year:"numeric"
-});
+monthEl.textContent=current.toLocaleDateString("cs-CZ",{month:"long",year:"numeric"});
 
 const first=new Date(year,month,1);
 const offset=(first.getDay()+6)%7;
 const total=new Date(year,month+1,0).getDate();
 
 for(let i=0;i<offset;i++){
-
 const e=document.createElement("div");
 e.className="day empty";
 daysEl.appendChild(e);
-
 }
 
 for(let d=1;d<=total;d++){
@@ -242,16 +367,19 @@ if(booked.includes(date)){
 
 el.classList.add("booked");
 
-if(arrival.includes(date))
-el.classList.add("arrival");
-
-if(departure.includes(date))
-el.classList.add("departure");
+if(arrival.includes(date)) el.classList.add("arrival");
+if(departure.includes(date)) el.classList.add("departure");
 
 }else{
 
 el.classList.add("free");
 
+el.onclick=()=>selectDate(date);
+
+}
+
+if(date===selectedArrival||date===selectedDeparture){
+el.classList.add("selected");
 }
 
 daysEl.appendChild(el);
@@ -260,18 +388,59 @@ daysEl.appendChild(el);
 
 }
 
-prevBtn.onclick=()=>{
+function selectDate(date){
 
-current.setMonth(current.getMonth()-1);
+if(!selectedArrival||selectedDeparture){
+
+selectedArrival=date;
+selectedDeparture=null;
+
+arrivalInput.value=format(date);
+departureInput.value="";
+
+}else{
+
+if(date>selectedArrival){
+
+selectedDeparture=date;
+departureInput.value=format(date);
+
+}else{
+
+selectedArrival=date;
+selectedDeparture=null;
+
+arrivalInput.value=format(date);
+departureInput.value="";
+
+}
+
+}
+
 draw();
 
+}
+
+function format(date){
+
+const d=new Date(date);
+
+return d.toLocaleDateString("cs-CZ",{
+day:"numeric",
+month:"numeric",
+year:"numeric"
+});
+
+}
+
+prevBtn.onclick=()=>{
+current.setMonth(current.getMonth()-1);
+draw();
 };
 
 nextBtn.onclick=()=>{
-
 current.setMonth(current.getMonth()+1);
 draw();
-
 };
 
 </script>
