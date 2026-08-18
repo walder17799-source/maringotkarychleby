@@ -44,7 +44,7 @@ jobs:
               end = datetime.strptime(e.group(1), "%Y%m%d")
 
               arrival.add(start.strftime("%Y-%m-%d"))
-              departure.add((end - timedelta(days=1)).strftime("%Y-%m-%d"))
+              departure.add(end.strftime("%Y-%m-%d"))
 
               d = start
               while d < end:
