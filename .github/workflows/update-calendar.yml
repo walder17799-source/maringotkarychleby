@@ -43,9 +43,13 @@ jobs:
               start = datetime.strptime(s.group(1), "%Y%m%d")
               end = datetime.strptime(e.group(1), "%Y%m%d")
 
+              # Příjezd = první den rezervace
               arrival.add(start.strftime("%Y-%m-%d"))
+
+              # Odjezd = skutečný den odjezdu (už se neodečítá den)
               departure.add(end.strftime("%Y-%m-%d"))
 
+              # Obsazené jsou všechny noci od příjezdu do dne před odjezdem
               d = start
               while d < end:
                   booked.add(d.strftime("%Y-%m-%d"))
