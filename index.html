@@ -8,8 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-
-*{box-sizing:border-box;}
+*{box-sizing:border-box}
 
 body{
   margin:0;
@@ -87,9 +86,7 @@ h2{
   transition:.2s;
 }
 
-.day.empty{
-  visibility:hidden;
-}
+.day.empty{visibility:hidden;}
 
 .day.free:hover{
   background:#EADBC8;
@@ -112,7 +109,7 @@ h2{
   color:white;
 }
 
-/* příjezd i odjezd = plně obsazeno */
+/* předávací den */
 .day.arrival.departure{
   background:#111;
   color:white;
@@ -139,9 +136,7 @@ h2{
   background:#F3F3F3;
 }
 
-.legend-box.booked{
-  background:#111;
-}
+.legend-box.booked{background:#111;}
 
 .legend-box.arrival{
   background:linear-gradient(135deg,#F3F3F3 0 50%,#111 50% 100%);
@@ -151,10 +146,16 @@ h2{
   background:linear-gradient(135deg,#111 0 50%,#F3F3F3 50% 100%);
 }
 
+.form-description{
+  margin:18px 0 30px;
+  color:#666;
+  line-height:1.7;
+  font-size:16px;
+}
+
 form{
   display:grid;
   gap:16px;
-  margin-top:34px;
 }
 
 input,textarea{
@@ -195,6 +196,10 @@ textarea{
   padding:20px;
 }
 
+h2{
+  font-size:42px;
+}
+
 .calendar-header h3{
   font-size:26px;
 }
@@ -214,7 +219,6 @@ textarea{
 }
 
 }
-
 </style>
 </head>
 
@@ -257,24 +261,39 @@ textarea{
 
 <h3>Požádat o rezervaci</h3>
 
-<p style="margin:0 0 14px;color:#666;line-height:1.6;">
-Vyplňte krátký formulář a ozveme se vám co nejdříve s potvrzením dostupnosti termínu.
-</p>
+<div class="form-description">
+Vyplňte krátký formulář a co nejdříve Vám potvrdíme dostupnost termínu. Po odeslání Vám přijde potvrzovací e-mail.
+</div>
 
 <form action="https://formsubmit.co/adam.weber@seznam.cz" method="POST">
 
 <input type="hidden" name="_subject" value="Nová žádost o rezervaci – Maringotka MIMO">
-<input type="hidden" name="_captcha" value="false">
+
+<input type="hidden" name="_replyto" value="email">
+
 <input type="hidden" name="_template" value="table">
-<input type="hidden" name="_next" value="https://walder17799-source.github.io/maringotkarychleby/">
 
-<input name="Jméno" placeholder="Jméno" required>
+<input type="hidden" name="_captcha" value="true">
 
-<input type="email" name="E-mail" placeholder="E-mail" required>
+<input type="hidden" name="_next" value="https://walder17799-source.github.io/maringotkarychleby/dekujeme.html">
+
+<input type="hidden" name="_autoresponse" value="Děkujeme za Vaši žádost o rezervaci v Maringotce MIMO.
+
+Vaši zprávu jsme úspěšně přijali a co nejdříve ověříme dostupnost termínu.
+
+Pokud bude vše v pořádku, ozveme se Vám s potvrzením rezervace a dalšími informacemi k pobytu.
+
+Těšíme se na Vás v Rychlebských horách.
+
+— Maringotka MIMO">
+
+<input name="Jméno" placeholder="Jméno a příjmení" required>
+
+<input type="email" name="email" placeholder="E-mail" required>
 
 <input name="Telefon" placeholder="Telefon">
 
-<textarea name="Poznámka" placeholder="Termín, počet osob nebo další informace"></textarea>
+<textarea name="Poznámka" placeholder="Například požadovaný termín nebo další informace"></textarea>
 
 <button class="submit">Odeslat žádost</button>
 
@@ -342,17 +361,17 @@ el.className="day";
 el.textContent=d;
 
 if(booked.includes(date)){
-el.classList.add("booked");
+  el.classList.add("booked");
 }else{
-el.classList.add("free");
+  el.classList.add("free");
 }
 
 if(arrival.includes(date)){
-el.classList.add("arrival");
+  el.classList.add("arrival");
 }
 
 if(departure.includes(date)){
-el.classList.add("departure");
+  el.classList.add("departure");
 }
 
 daysEl.appendChild(el);
