@@ -9,9 +9,7 @@
 
 <style>
 
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box;}
 
 body{
   margin:0;
@@ -62,8 +60,7 @@ h2{
   cursor:pointer;
 }
 
-.weekdays,
-.days{
+.weekdays,.days{
   display:grid;
   grid-template-columns:repeat(7,1fr);
   gap:12px;
@@ -103,19 +100,19 @@ h2{
   color:white;
 }
 
-/* Příjezd */
-.day.arrival{
+/* pouze příjezd */
+.day.arrival:not(.departure){
   background:linear-gradient(135deg,#F3F3F3 0 50%,#111 50% 100%);
   color:white;
 }
 
-/* Odjezd */
-.day.departure{
+/* pouze odjezd */
+.day.departure:not(.arrival){
   background:linear-gradient(135deg,#111 0 50%,#F3F3F3 50% 100%);
   color:white;
 }
 
-/* Předávací den – odjezd + příjezd */
+/* příjezd i odjezd = plně obsazeno */
 .day.arrival.departure{
   background:#111;
   color:white;
@@ -154,18 +151,13 @@ h2{
   background:linear-gradient(135deg,#111 0 50%,#F3F3F3 50% 100%);
 }
 
-.legend-box.arrival.departure{
-  background:#111;
-}
-
 form{
   display:grid;
   gap:16px;
   margin-top:34px;
 }
 
-input,
-textarea{
+input,textarea{
   width:100%;
   padding:16px;
   border-radius:14px;
@@ -175,7 +167,8 @@ textarea{
 }
 
 textarea{
-  min-height:120px;
+  min-height:130px;
+  resize:vertical;
 }
 
 .submit{
@@ -186,6 +179,10 @@ textarea{
   padding:16px;
   font-size:17px;
   cursor:pointer;
+}
+
+.submit:hover{
+  opacity:.95;
 }
 
 @media(max-width:700px){
@@ -207,8 +204,7 @@ textarea{
   border-radius:14px;
 }
 
-.weekdays,
-.days{
+.weekdays,.days{
   gap:8px;
 }
 
@@ -231,13 +227,9 @@ textarea{
 <div class="card">
 
 <div class="calendar-header">
-
 <button id="prev" class="nav-btn">‹</button>
-
 <h3 id="month"></h3>
-
 <button id="next" class="nav-btn">›</button>
-
 </div>
 
 <div class="weekdays">
@@ -253,27 +245,10 @@ textarea{
 <div id="days" class="days"></div>
 
 <div class="legend">
-
-<div class="legend-item">
-<div class="legend-box"></div>
-Volno
-</div>
-
-<div class="legend-item">
-<div class="legend-box booked"></div>
-Obsazeno
-</div>
-
-<div class="legend-item">
-<div class="legend-box arrival"></div>
-Příjezd
-</div>
-
-<div class="legend-item">
-<div class="legend-box departure"></div>
-Odjezd
-</div>
-
+<div class="legend-item"><div class="legend-box"></div>Volno</div>
+<div class="legend-item"><div class="legend-box booked"></div>Obsazeno</div>
+<div class="legend-item"><div class="legend-box arrival"></div>Příjezd</div>
+<div class="legend-item"><div class="legend-box departure"></div>Odjezd</div>
 </div>
 
 </div>
@@ -282,9 +257,16 @@ Odjezd
 
 <h3>Požádat o rezervaci</h3>
 
-<form action="https://api.web3forms.com/submit" method="POST">
+<p style="margin:0 0 14px;color:#666;line-height:1.6;">
+Vyplňte krátký formulář a ozveme se vám co nejdříve s potvrzením dostupnosti termínu.
+</p>
 
-<input type="hidden" name="access_key" value="4019eb80-3ffe-4332-b855-66a60eb5fb1f">
+<form action="https://formsubmit.co/adam.weber@seznam.cz" method="POST">
+
+<input type="hidden" name="_subject" value="Nová žádost o rezervaci – Maringotka MIMO">
+<input type="hidden" name="_captcha" value="false">
+<input type="hidden" name="_template" value="table">
+<input type="hidden" name="_next" value="https://walder17799-source.github.io/maringotkarychleby/">
 
 <input name="Jméno" placeholder="Jméno" required>
 
@@ -360,17 +342,17 @@ el.className="day";
 el.textContent=d;
 
 if(booked.includes(date)){
-  el.classList.add("booked");
+el.classList.add("booked");
 }else{
-  el.classList.add("free");
+el.classList.add("free");
 }
 
 if(arrival.includes(date)){
-  el.classList.add("arrival");
+el.classList.add("arrival");
 }
 
 if(departure.includes(date)){
-  el.classList.add("departure");
+el.classList.add("departure");
 }
 
 daysEl.appendChild(el);
@@ -380,17 +362,13 @@ daysEl.appendChild(el);
 }
 
 prevBtn.onclick=()=>{
-
 current.setMonth(current.getMonth()-1);
 draw();
-
 };
 
 nextBtn.onclick=()=>{
-
 current.setMonth(current.getMonth()+1);
 draw();
-
 };
 
 </script>
