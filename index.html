@@ -9,7 +9,9 @@
 
 <style>
 
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
 
 body{
   margin:0;
@@ -107,10 +109,14 @@ h2{
   color:white;
 }
 
+/* Příjezd */
+
 .day.arrival{
   background:linear-gradient(135deg,#F3F3F3 0 50%,#111 50% 100%);
   color:white;
 }
+
+/* Odjezd */
 
 .day.departure{
   background:linear-gradient(135deg,#111 0 50%,#F3F3F3 50% 100%);
@@ -141,17 +147,9 @@ h2{
   border-radius:5px;
 }
 
-.legend-booked{
-  background:#111;
-}
-
-.legend-arrival{
-  background:linear-gradient(135deg,#F3F3F3 0 50%,#111 50% 100%);
-}
-
-.legend-departure{
-  background:linear-gradient(135deg,#111 0 50%,#F3F3F3 50% 100%);
-}
+.legend-booked{background:#111;}
+.legend-arrival{background:linear-gradient(135deg,#F3F3F3 0 50%,#111 50% 100%);}
+.legend-departure{background:linear-gradient(135deg,#111 0 50%,#F3F3F3 50% 100%);}
 
 form{
   display:grid;
@@ -253,22 +251,18 @@ h2{
 <div id="days" class="days"></div>
 
 <div class="legend">
-
-<div class="legend-item">
-<div class="legend-box legend-booked"></div>
-Obsazeno
-</div>
-
-<div class="legend-item">
-<div class="legend-box legend-arrival"></div>
-Příjezd
-</div>
-
-<div class="legend-item">
-<div class="legend-box legend-departure"></div>
-Odjezd
-</div>
-
+  <div class="legend-item">
+    <div class="legend-box legend-booked"></div>
+    Obsazeno
+  </div>
+  <div class="legend-item">
+    <div class="legend-box legend-arrival"></div>
+    Příjezd
+  </div>
+  <div class="legend-item">
+    <div class="legend-box legend-departure"></div>
+    Odjezd
+  </div>
 </div>
 
 </div>
@@ -280,7 +274,6 @@ Odjezd
 <form action="https://api.web3forms.com/submit" method="POST">
 
 <input type="hidden" name="access_key" value="4019eb80-3ffe-4332-b855-66a60eb5fb1f">
-
 <input type="hidden" name="subject" value="Nová žádost o rezervaci – Maringotka MIMO">
 
 <input type="text" name="Jméno" placeholder="Jméno a příjmení" required>
@@ -329,10 +322,13 @@ const departureInput=document.getElementById("departureInput");
 fetch("availability.json")
 .then(r=>r.json())
 .then(data=>{
+
 booked=data.booked||[];
 arrival=data.arrival||[];
 departure=data.departure||[];
+
 draw();
+
 })
 .catch(()=>draw());
 
@@ -343,16 +339,21 @@ daysEl.innerHTML="";
 const year=current.getFullYear();
 const month=current.getMonth();
 
-monthEl.textContent=current.toLocaleDateString("cs-CZ",{month:"long",year:"numeric"});
+monthEl.textContent=current.toLocaleDateString("cs-CZ",{
+month:"long",
+year:"numeric"
+});
 
 const first=new Date(year,month,1);
 const offset=(first.getDay()+6)%7;
 const total=new Date(year,month+1,0).getDate();
 
 for(let i=0;i<offset;i++){
+
 const e=document.createElement("div");
 e.className="day empty";
 daysEl.appendChild(e);
+
 }
 
 for(let d=1;d<=total;d++){
@@ -367,12 +368,17 @@ if(booked.includes(date)){
 
 el.classList.add("booked");
 
-if(arrival.includes(date)) el.classList.add("arrival");
-if(departure.includes(date)) el.classList.add("departure");
+if(arrival.includes(date)){
+el.classList.add("arrival");
+}
 
 }else{
 
 el.classList.add("free");
+
+if(departure.includes(date)){
+el.classList.add("departure");
+}
 
 el.onclick=()=>selectDate(date);
 
@@ -434,13 +440,17 @@ year:"numeric"
 }
 
 prevBtn.onclick=()=>{
+
 current.setMonth(current.getMonth()-1);
 draw();
+
 };
 
 nextBtn.onclick=()=>{
+
 current.setMonth(current.getMonth()+1);
 draw();
+
 };
 
 </script>
