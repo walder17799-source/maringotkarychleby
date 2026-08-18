@@ -103,15 +103,21 @@ h2{
   color:white;
 }
 
-/* příjezd */
+/* Příjezd */
 .day.arrival{
   background:linear-gradient(135deg,#F3F3F3 0 50%,#111 50% 100%);
   color:white;
 }
 
-/* odjezd */
+/* Odjezd */
 .day.departure{
   background:linear-gradient(135deg,#111 0 50%,#F3F3F3 50% 100%);
+  color:white;
+}
+
+/* Předávací den – odjezd + příjezd */
+.day.arrival.departure{
+  background:#111;
   color:white;
 }
 
@@ -146,6 +152,10 @@ h2{
 
 .legend-box.departure{
   background:linear-gradient(135deg,#111 0 50%,#F3F3F3 50% 100%);
+}
+
+.legend-box.arrival.departure{
+  background:#111;
 }
 
 form{
@@ -350,17 +360,17 @@ el.className="day";
 el.textContent=d;
 
 if(booked.includes(date)){
-el.classList.add("booked");
+  el.classList.add("booked");
 }else{
-el.classList.add("free");
+  el.classList.add("free");
 }
 
 if(arrival.includes(date)){
-el.classList.add("arrival");
+  el.classList.add("arrival");
 }
 
 if(departure.includes(date)){
-el.classList.add("departure");
+  el.classList.add("departure");
 }
 
 daysEl.appendChild(el);
