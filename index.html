@@ -88,16 +88,10 @@ h2{
   border-radius:18px;
   font-size:28px;
   transition:.2s;
-  position:relative;
-  overflow:hidden;
 }
 
 .day.empty{
   visibility:hidden;
-}
-
-.day.free{
-  cursor:pointer;
 }
 
 .day.free:hover{
@@ -109,56 +103,58 @@ h2{
   color:white;
 }
 
-/* Příjezd */
-
+/* příjezd */
 .day.arrival{
   background:linear-gradient(135deg,#F3F3F3 0 50%,#111 50% 100%);
   color:white;
 }
 
-/* Odjezd */
-
+/* odjezd */
 .day.departure{
   background:linear-gradient(135deg,#111 0 50%,#F3F3F3 50% 100%);
   color:white;
 }
 
-.day.selected{
-  outline:3px solid #D9C8B0;
-}
-
 .legend{
   display:flex;
-  gap:22px;
-  margin-top:22px;
+  gap:26px;
   flex-wrap:wrap;
+  margin-top:26px;
   font-size:15px;
 }
 
 .legend-item{
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:10px;
 }
 
 .legend-box{
-  width:18px;
-  height:18px;
-  border-radius:5px;
+  width:20px;
+  height:20px;
+  border-radius:6px;
+  background:#F3F3F3;
 }
 
-.legend-booked{background:#111;}
-.legend-arrival{background:linear-gradient(135deg,#F3F3F3 0 50%,#111 50% 100%);}
-.legend-departure{background:linear-gradient(135deg,#111 0 50%,#F3F3F3 50% 100%);}
+.legend-box.booked{
+  background:#111;
+}
+
+.legend-box.arrival{
+  background:linear-gradient(135deg,#F3F3F3 0 50%,#111 50% 100%);
+}
+
+.legend-box.departure{
+  background:linear-gradient(135deg,#111 0 50%,#F3F3F3 50% 100%);
+}
 
 form{
   display:grid;
-  gap:14px;
-  margin-top:22px;
+  gap:16px;
+  margin-top:34px;
 }
 
 input,
-select,
 textarea{
   width:100%;
   padding:16px;
@@ -170,21 +166,16 @@ textarea{
 
 textarea{
   min-height:120px;
-  resize:vertical;
 }
 
 .submit{
   background:#14382E;
   color:white;
   border:none;
-  padding:16px;
   border-radius:999px;
+  padding:16px;
   font-size:17px;
   cursor:pointer;
-}
-
-.submit:hover{
-  opacity:.92;
 }
 
 @media(max-width:700px){
@@ -195,10 +186,6 @@ textarea{
 
 .card{
   padding:20px;
-}
-
-h2{
-  font-size:42px;
 }
 
 .calendar-header h3{
@@ -215,15 +202,16 @@ h2{
   gap:8px;
 }
 
-.nav-btn{
-  width:44px;
-  height:44px;
+.legend{
+  gap:16px;
+  font-size:14px;
 }
 
 }
 
 </style>
 </head>
+
 <body>
 
 <div class="container">
@@ -233,9 +221,13 @@ h2{
 <div class="card">
 
 <div class="calendar-header">
+
 <button id="prev" class="nav-btn">‹</button>
+
 <h3 id="month"></h3>
+
 <button id="next" class="nav-btn">›</button>
+
 </div>
 
 <div class="weekdays">
@@ -251,47 +243,46 @@ h2{
 <div id="days" class="days"></div>
 
 <div class="legend">
-  <div class="legend-item">
-    <div class="legend-box legend-booked"></div>
-    Obsazeno
-  </div>
-  <div class="legend-item">
-    <div class="legend-box legend-arrival"></div>
-    Příjezd
-  </div>
-  <div class="legend-item">
-    <div class="legend-box legend-departure"></div>
-    Odjezd
-  </div>
+
+<div class="legend-item">
+<div class="legend-box"></div>
+Volno
+</div>
+
+<div class="legend-item">
+<div class="legend-box booked"></div>
+Obsazeno
+</div>
+
+<div class="legend-item">
+<div class="legend-box arrival"></div>
+Příjezd
+</div>
+
+<div class="legend-item">
+<div class="legend-box departure"></div>
+Odjezd
 </div>
 
 </div>
 
-<div class="card" style="margin-top:30px;">
+</div>
 
-<h3 style="margin-top:0;font-size:34px;">Požádat o rezervaci</h3>
+<div class="card" style="margin-top:28px;">
+
+<h3>Požádat o rezervaci</h3>
 
 <form action="https://api.web3forms.com/submit" method="POST">
 
 <input type="hidden" name="access_key" value="4019eb80-3ffe-4332-b855-66a60eb5fb1f">
-<input type="hidden" name="subject" value="Nová žádost o rezervaci – Maringotka MIMO">
 
-<input type="text" name="Jméno" placeholder="Jméno a příjmení" required>
+<input name="Jméno" placeholder="Jméno" required>
 
 <input type="email" name="E-mail" placeholder="E-mail" required>
 
-<input type="tel" name="Telefon" placeholder="Telefon">
+<input name="Telefon" placeholder="Telefon">
 
-<input id="arrivalInput" name="Příjezd" placeholder="Příjezd" required>
-
-<input id="departureInput" name="Odjezd" placeholder="Odjezd" required>
-
-<select name="Počet osob">
-<option value="1">1 osoba</option>
-<option value="2" selected>2 osoby</option>
-</select>
-
-<textarea name="Poznámka" placeholder="Napište nám cokoliv – například přibližný čas příjezdu nebo dotaz."></textarea>
+<textarea name="Poznámka" placeholder="Termín, počet osob nebo další informace"></textarea>
 
 <button class="submit">Odeslat žádost</button>
 
@@ -308,16 +299,10 @@ let arrival=[];
 let departure=[];
 let current=new Date();
 
-let selectedArrival=null;
-let selectedDeparture=null;
-
 const monthEl=document.getElementById("month");
 const daysEl=document.getElementById("days");
 const prevBtn=document.getElementById("prev");
 const nextBtn=document.getElementById("next");
-
-const arrivalInput=document.getElementById("arrivalInput");
-const departureInput=document.getElementById("departureInput");
 
 fetch("availability.json")
 .then(r=>r.json())
@@ -365,77 +350,22 @@ el.className="day";
 el.textContent=d;
 
 if(booked.includes(date)){
-
 el.classList.add("booked");
+}else{
+el.classList.add("free");
+}
 
 if(arrival.includes(date)){
 el.classList.add("arrival");
 }
 
-}else{
-
-el.classList.add("free");
-
 if(departure.includes(date)){
 el.classList.add("departure");
-}
-
-el.onclick=()=>selectDate(date);
-
-}
-
-if(date===selectedArrival||date===selectedDeparture){
-el.classList.add("selected");
 }
 
 daysEl.appendChild(el);
 
 }
-
-}
-
-function selectDate(date){
-
-if(!selectedArrival||selectedDeparture){
-
-selectedArrival=date;
-selectedDeparture=null;
-
-arrivalInput.value=format(date);
-departureInput.value="";
-
-}else{
-
-if(date>selectedArrival){
-
-selectedDeparture=date;
-departureInput.value=format(date);
-
-}else{
-
-selectedArrival=date;
-selectedDeparture=null;
-
-arrivalInput.value=format(date);
-departureInput.value="";
-
-}
-
-}
-
-draw();
-
-}
-
-function format(date){
-
-const d=new Date(date);
-
-return d.toLocaleDateString("cs-CZ",{
-day:"numeric",
-month:"numeric",
-year:"numeric"
-});
 
 }
 
